@@ -1,0 +1,1253 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "description": "使用用户名和密码登录，返回 JWT accessToken。",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "登录成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthTokenResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "用户登录",
+        "tags": [
+          "认证模块"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "description": "刷新并返回新的 accessToken。",
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "刷新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthTokenResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "刷新令牌",
+        "tags": [
+          "认证模块"
+        ]
+      }
+    },
+    "/resources": {
+      "get": {
+        "description": "支持按 id/关键字/分类分页查询资源列表。",
+        "operationId": "ResourceController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "页码，从 1 开始",
+            "schema": {
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "每页条数，最大 100",
+            "schema": {
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "资源 id（单 id 场景只用 id）",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyword",
+            "required": false,
+            "in": "query",
+            "description": "标题关键字",
+            "schema": {
+              "example": "演示",
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "分类",
+            "schema": {
+              "example": "movie",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceListResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "资源列表查询",
+        "tags": [
+          "资源模块"
+        ]
+      }
+    },
+    "/resource-detail": {
+      "get": {
+        "description": "单对象操作统一使用 query 参数 id，不使用路径参数。",
+        "operationId": "ResourceController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "description": "资源主键 id（UUID）",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceItemDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "资源详情查询",
+        "tags": [
+          "资源模块"
+        ]
+      }
+    },
+    "/resource-episodes": {
+      "get": {
+        "description": "按资源 id 查询分集列表，单对象参数统一使用 id。",
+        "operationId": "ResourceController_episodes",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "description": "资源主键 id（UUID）",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EpisodeDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "资源分集查询",
+        "tags": [
+          "资源模块"
+        ]
+      }
+    },
+    "/crawl-job/create": {
+      "post": {
+        "description": "创建一个资源站目录元数据采集任务。",
+        "operationId": "CrawlJobController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCrawlJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "创建成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrawlJobResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "创建采集任务",
+        "tags": [
+          "采集任务模块"
+        ]
+      }
+    },
+    "/crawl-job/detail": {
+      "get": {
+        "description": "单对象操作统一使用 query 参数 id。",
+        "operationId": "CrawlJobController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "description": "任务主键 id（UUID）",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrawlJobResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "采集任务详情",
+        "tags": [
+          "采集任务模块"
+        ]
+      }
+    },
+    "/parser-sources": {
+      "get": {
+        "description": "按 system/user 范围查询解析源配置列表。",
+        "operationId": "ParserSourceController_list",
+        "parameters": [
+          {
+            "name": "scope",
+            "required": false,
+            "in": "query",
+            "description": "查询范围：system 或 user",
+            "schema": {
+              "example": "system",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParserSourceDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "解析源列表",
+        "tags": [
+          "解析源模块"
+        ]
+      }
+    },
+    "/parser-source/create": {
+      "post": {
+        "description": "新增用户自定义解析源。",
+        "operationId": "ParserSourceController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateParserSourceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "创建成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserSourceDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "创建解析源",
+        "tags": [
+          "解析源模块"
+        ]
+      }
+    },
+    "/parser-source/update": {
+      "post": {
+        "description": "单对象更新统一使用 body.id。",
+        "operationId": "ParserSourceController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateParserSourceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserSourceDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "更新解析源",
+        "tags": [
+          "解析源模块"
+        ]
+      }
+    },
+    "/user-parser-source/toggle": {
+      "post": {
+        "description": "单对象操作统一使用 body.id。",
+        "operationId": "UserParserSourceController_toggle",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleUserParserSourceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToggleUserParserSourceResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "启用/禁用用户解析源",
+        "tags": [
+          "用户解析源模块"
+        ]
+      }
+    },
+    "/resolve": {
+      "post": {
+        "description": "多 ID 场景保留语义字段：resourceId/episodeId/parserSourceId。",
+        "operationId": "ResolveController_resolve",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "解析成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResolveResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "资源解析",
+        "tags": [
+          "解析模块"
+        ]
+      }
+    },
+    "/knowledge/agent-note/create": {
+      "post": {
+        "description": "写入任务知识，用于后续复用，减少重复分析。",
+        "operationId": "KnowledgeController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgentNoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "创建成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentNoteResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "创建知识记录",
+        "tags": [
+          "知识沉淀模块"
+        ]
+      }
+    },
+    "/knowledge/agent-note/search": {
+      "get": {
+        "description": "按关键字或 taskKey 检索历史知识。",
+        "operationId": "KnowledgeController_search",
+        "parameters": [
+          {
+            "name": "keyword",
+            "required": false,
+            "in": "query",
+            "description": "关键字搜索",
+            "schema": {
+              "example": "id",
+              "type": "string"
+            }
+          },
+          {
+            "name": "taskKey",
+            "required": false,
+            "in": "query",
+            "description": "任务标识过滤",
+            "schema": {
+              "example": "video-resource-v1",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgentNoteResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "搜索知识记录",
+        "tags": [
+          "知识沉淀模块"
+        ]
+      }
+    },
+    "/knowledge/agent-note/detail": {
+      "post": {
+        "description": "单对象查询统一使用 body.id。",
+        "operationId": "KnowledgeController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "仅作规则提示：单对象参数统一为 id",
+            "schema": {}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentNoteDetailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentNoteResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "知识记录详情",
+        "tags": [
+          "知识沉淀模块"
+        ]
+      }
+    },
+    "/skill-template/generate": {
+      "post": {
+        "description": "根据名称和场景生成可复用的 skill 草稿模板。",
+        "operationId": "SkillTemplateController_generate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateSkillTemplateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "创建成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillTemplateResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "生成 Skill 模板",
+        "tags": [
+          "Skill 模板模块"
+        ]
+      }
+    },
+    "/skill-template/list": {
+      "get": {
+        "description": "按关键字与状态过滤模板列表。",
+        "operationId": "SkillTemplateController_list",
+        "parameters": [
+          {
+            "name": "keyword",
+            "required": false,
+            "in": "query",
+            "description": "关键字过滤",
+            "schema": {
+              "example": "解析源",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "状态过滤",
+            "schema": {
+              "example": "draft",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SkillTemplateResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Skill 模板列表",
+        "tags": [
+          "Skill 模板模块"
+        ]
+      }
+    },
+    "/skill-template/detail": {
+      "post": {
+        "description": "单对象查询统一使用 body.id。",
+        "operationId": "SkillTemplateController_detail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillTemplateIdDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillTemplateResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Skill 模板详情",
+        "tags": [
+          "Skill 模板模块"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Isle Flix 服务端接口文档",
+    "description": "视频资源聚合服务接口文档（中文）。单对象操作统一使用 id，禁止路径参数。",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "先调用 /auth/login 获取 accessToken，再在此处填入。"
+      }
+    },
+    "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "登录用户名",
+            "example": "admin"
+          },
+          "password": {
+            "type": "string",
+            "description": "登录密码，最少 6 位",
+            "example": "123456"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "AuthTokenResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "JWT 访问令牌",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxx.yyy"
+          }
+        },
+        "required": [
+          "accessToken"
+        ]
+      },
+      "ResourceItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "资源主键 id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "title": {
+            "type": "string",
+            "description": "资源标题",
+            "example": "Demo Video A"
+          },
+          "category": {
+            "type": "string",
+            "description": "资源分类",
+            "example": "movie"
+          },
+          "siteKey": {
+            "type": "string",
+            "description": "来源站点标识",
+            "example": "yszzq"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "category",
+          "siteKey"
+        ]
+      },
+      "ResourceListResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "列表数据",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceItemDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "总条数",
+            "example": 1
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ]
+      },
+      "EpisodeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "分集主键 id",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "所属资源 id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "description": "分集名称",
+            "example": "Episode 1"
+          },
+          "playPageUrl": {
+            "type": "string",
+            "description": "播放页地址",
+            "example": "https://www.yszzq.com/ziyuan/"
+          }
+        },
+        "required": [
+          "id",
+          "resourceId",
+          "name",
+          "playPageUrl"
+        ]
+      },
+      "CreateCrawlJobDto": {
+        "type": "object",
+        "properties": {
+          "siteKey": {
+            "type": "string",
+            "description": "站点标识",
+            "example": "yszzq"
+          },
+          "category": {
+            "type": "string",
+            "description": "可选分类过滤",
+            "example": "movie"
+          }
+        },
+        "required": [
+          "siteKey"
+        ]
+      },
+      "CrawlJobResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "任务主键 id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "siteKey": {
+            "type": "string",
+            "description": "站点标识",
+            "example": "yszzq"
+          },
+          "category": {
+            "type": "string",
+            "description": "任务分类",
+            "example": "movie"
+          },
+          "status": {
+            "type": "string",
+            "description": "任务状态",
+            "example": "queued"
+          }
+        },
+        "required": [
+          "id",
+          "siteKey",
+          "status"
+        ]
+      },
+      "ParserSourceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "解析源主键 id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "description": "解析源名称",
+            "example": "system-default"
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "解析服务地址",
+            "example": "https://parser.example.com"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "是否启用",
+            "example": true
+          },
+          "ownerType": {
+            "type": "string",
+            "description": "归属类型",
+            "example": "system"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "endpoint",
+          "enabled",
+          "ownerType"
+        ]
+      },
+      "CreateParserSourceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "解析源名称",
+            "example": "系统默认解析源"
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "解析服务地址",
+            "example": "https://parser.example.com"
+          }
+        },
+        "required": [
+          "name",
+          "endpoint"
+        ]
+      },
+      "UpdateParserSourceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "解析源主键 id（单 id 场景统一使用 id）",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "description": "解析源名称",
+            "example": "用户自定义解析源"
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "解析服务地址",
+            "example": "https://example.com/parser"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "是否启用",
+            "example": true
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ToggleUserParserSourceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "解析源主键 id（单 id 场景统一使用 id）",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "是否启用",
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "enabled"
+        ]
+      },
+      "ToggleUserParserSourceResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "解析源主键 id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "是否启用",
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "enabled"
+        ]
+      },
+      "ResolveDto": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "description": "资源 id（多 ID 场景保留语义名）",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "episodeId": {
+            "type": "string",
+            "description": "分集 id（多 ID 场景保留语义名）",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          "parserSourceId": {
+            "type": "string",
+            "description": "解析源 id（多 ID 场景保留语义名）",
+            "example": "6ba7b810-9dad-41d1-80b4-00c04fd430c8"
+          },
+          "targetUrl": {
+            "type": "string",
+            "description": "待解析目标地址",
+            "example": "https://www.yszzq.com/ziyuan/"
+          }
+        },
+        "required": [
+          "parserSourceId",
+          "targetUrl"
+        ]
+      },
+      "ResolveResponseDto": {
+        "type": "object",
+        "properties": {
+          "parserSourceId": {
+            "type": "string",
+            "description": "使用的解析源 id",
+            "example": "6ba7b810-9dad-41d1-80b4-00c04fd430c8"
+          },
+          "resolvedUrl": {
+            "type": "string",
+            "description": "解析结果地址",
+            "example": "https://www.yszzq.com/ziyuan/?via=6ba7b810-9dad-41d1-80b4-00c04fd430c8"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "资源 id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "episodeId": {
+            "type": "string",
+            "description": "分集 id",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          }
+        },
+        "required": [
+          "parserSourceId",
+          "resolvedUrl"
+        ]
+      },
+      "CreateAgentNoteDto": {
+        "type": "object",
+        "properties": {
+          "taskKey": {
+            "type": "string",
+            "description": "任务标识",
+            "example": "video-resource-v1"
+          },
+          "content": {
+            "type": "string",
+            "description": "任务知识内容",
+            "example": "统一约定单对象参数使用 id。"
+          }
+        },
+        "required": [
+          "taskKey",
+          "content"
+        ]
+      },
+      "AgentNoteResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "知识记录主键 id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "taskKey": {
+            "type": "string",
+            "description": "任务标识",
+            "example": "video-resource-v1"
+          },
+          "content": {
+            "type": "string",
+            "description": "知识内容",
+            "example": "统一约定单对象参数使用 id。"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "创建时间",
+            "example": "2026-05-14T12:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "taskKey",
+          "content",
+          "createdAt"
+        ]
+      },
+      "AgentNoteDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "知识记录主键 id（单 id 场景统一使用 id）",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "GenerateSkillTemplateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "skill 模板名称",
+            "example": "解析源切换规范"
+          },
+          "scenario": {
+            "type": "string",
+            "description": "适用场景描述",
+            "example": "用户需要在客户端切换解析源时使用。"
+          }
+        },
+        "required": [
+          "name",
+          "scenario"
+        ]
+      },
+      "SkillTemplateResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "模板主键 id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "description": "模板名称",
+            "example": "解析源切换规范"
+          },
+          "scenario": {
+            "type": "string",
+            "description": "场景说明",
+            "example": "用户需要在客户端切换解析源时使用。"
+          },
+          "status": {
+            "type": "string",
+            "description": "模板状态",
+            "example": "draft"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "创建时间",
+            "example": "2026-05-14T12:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "scenario",
+          "status",
+          "createdAt"
+        ]
+      },
+      "SkillTemplateIdDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "skill 模板主键 id（单 id 场景统一使用 id）",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    }
+  }
+}

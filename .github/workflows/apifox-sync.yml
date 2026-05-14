@@ -1,0 +1,50 @@
+name: Apifox OpenAPI Sync
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: apifox-sync-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Build, Test and Sync Apifox
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APIFOX_IMPORT_URL: ${{ secrets.APIFOX_IMPORT_URL }}
+      APIFOX_TOKEN: ${{ secrets.APIFOX_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "${APIFOX_IMPORT_URL}" ]; then
+            echo "::error::Missing required secret APIFOX_IMPORT_URL"
+            exit 1
+          fi
+          echo "APIFOX_IMPORT_URL 已配置，准备执行同步。"
+
+      - name: Sync OpenAPI to Apifox
+        run: npm run apifox:sync
