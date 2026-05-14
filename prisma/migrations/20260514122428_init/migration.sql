@@ -258,6 +258,131 @@ ALTER TABLE "ResolveLog" ADD CONSTRAINT "ResolveLog_parserSourceId_fkey" FOREIGN
 -- AddForeignKey
 ALTER TABLE "CrawlJob" ADD CONSTRAINT "CrawlJob_siteProviderId_fkey" FOREIGN KEY ("siteProviderId") REFERENCES "SiteProvider"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
+-- Table and column comments
+COMMENT ON TABLE "User" IS '系统用户';
+COMMENT ON COLUMN "User"."id" IS '主键ID';
+COMMENT ON COLUMN "User"."username" IS '用户名';
+COMMENT ON COLUMN "User"."passwordHash" IS '密码哈希';
+COMMENT ON COLUMN "User"."status" IS '用户状态';
+COMMENT ON COLUMN "User"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "User"."updatedAt" IS '更新时间';
+COMMENT ON COLUMN "User"."deletedAt" IS '删除时间（软删除）';
+
+COMMENT ON TABLE "Role" IS '角色定义';
+COMMENT ON COLUMN "Role"."id" IS '主键ID';
+COMMENT ON COLUMN "Role"."code" IS '角色编码';
+COMMENT ON COLUMN "Role"."name" IS '角色名称';
+COMMENT ON COLUMN "Role"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "Role"."updatedAt" IS '更新时间';
+
+COMMENT ON TABLE "UserRole" IS '用户角色关联';
+COMMENT ON COLUMN "UserRole"."id" IS '主键ID';
+COMMENT ON COLUMN "UserRole"."userId" IS '用户ID';
+COMMENT ON COLUMN "UserRole"."roleId" IS '角色ID';
+COMMENT ON COLUMN "UserRole"."createdAt" IS '创建时间';
+
+COMMENT ON TABLE "SiteProvider" IS '站点提供方';
+COMMENT ON COLUMN "SiteProvider"."id" IS '主键ID';
+COMMENT ON COLUMN "SiteProvider"."key" IS '站点唯一标识';
+COMMENT ON COLUMN "SiteProvider"."name" IS '站点名称';
+COMMENT ON COLUMN "SiteProvider"."baseUrl" IS '站点基础地址';
+COMMENT ON COLUMN "SiteProvider"."status" IS '状态';
+COMMENT ON COLUMN "SiteProvider"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "SiteProvider"."updatedAt" IS '更新时间';
+
+COMMENT ON TABLE "SiteProviderConfig" IS '站点配置';
+COMMENT ON COLUMN "SiteProviderConfig"."id" IS '主键ID';
+COMMENT ON COLUMN "SiteProviderConfig"."siteProviderId" IS '站点提供方ID';
+COMMENT ON COLUMN "SiteProviderConfig"."configKey" IS '配置键';
+COMMENT ON COLUMN "SiteProviderConfig"."configValue" IS '配置值';
+COMMENT ON COLUMN "SiteProviderConfig"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "SiteProviderConfig"."updatedAt" IS '更新时间';
+
+COMMENT ON TABLE "MediaResource" IS '媒体资源';
+COMMENT ON COLUMN "MediaResource"."id" IS '主键ID';
+COMMENT ON COLUMN "MediaResource"."siteProviderId" IS '站点提供方ID';
+COMMENT ON COLUMN "MediaResource"."externalId" IS '外部资源ID';
+COMMENT ON COLUMN "MediaResource"."title" IS '资源标题';
+COMMENT ON COLUMN "MediaResource"."category" IS '资源分类';
+COMMENT ON COLUMN "MediaResource"."detailUrl" IS '详情页地址';
+COMMENT ON COLUMN "MediaResource"."coverUrl" IS '封面地址';
+COMMENT ON COLUMN "MediaResource"."status" IS '状态';
+COMMENT ON COLUMN "MediaResource"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "MediaResource"."updatedAt" IS '更新时间';
+
+COMMENT ON TABLE "MediaEpisode" IS '媒体分集';
+COMMENT ON COLUMN "MediaEpisode"."id" IS '主键ID';
+COMMENT ON COLUMN "MediaEpisode"."mediaResourceId" IS '媒体资源ID';
+COMMENT ON COLUMN "MediaEpisode"."episodeName" IS '分集名称';
+COMMENT ON COLUMN "MediaEpisode"."playPageUrl" IS '播放页地址';
+COMMENT ON COLUMN "MediaEpisode"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "MediaEpisode"."updatedAt" IS '更新时间';
+
+COMMENT ON TABLE "MediaTag" IS '媒体标签';
+COMMENT ON COLUMN "MediaTag"."id" IS '主键ID';
+COMMENT ON COLUMN "MediaTag"."name" IS '标签名称';
+COMMENT ON COLUMN "MediaTag"."createdAt" IS '创建时间';
+
+COMMENT ON TABLE "MediaResourceTag" IS '媒体资源标签关联';
+COMMENT ON COLUMN "MediaResourceTag"."id" IS '主键ID';
+COMMENT ON COLUMN "MediaResourceTag"."mediaResourceId" IS '媒体资源ID';
+COMMENT ON COLUMN "MediaResourceTag"."mediaTagId" IS '媒体标签ID';
+
+COMMENT ON TABLE "ParserSource" IS '解析源';
+COMMENT ON COLUMN "ParserSource"."id" IS '主键ID';
+COMMENT ON COLUMN "ParserSource"."name" IS '解析源名称';
+COMMENT ON COLUMN "ParserSource"."endpoint" IS '解析服务地址';
+COMMENT ON COLUMN "ParserSource"."ownerType" IS '归属类型';
+COMMENT ON COLUMN "ParserSource"."status" IS '状态';
+COMMENT ON COLUMN "ParserSource"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "ParserSource"."updatedAt" IS '更新时间';
+
+COMMENT ON TABLE "UserParserSource" IS '用户解析源配置';
+COMMENT ON COLUMN "UserParserSource"."id" IS '主键ID';
+COMMENT ON COLUMN "UserParserSource"."userId" IS '用户ID';
+COMMENT ON COLUMN "UserParserSource"."parserSourceId" IS '解析源ID';
+COMMENT ON COLUMN "UserParserSource"."enabled" IS '是否启用';
+COMMENT ON COLUMN "UserParserSource"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "UserParserSource"."updatedAt" IS '更新时间';
+
+COMMENT ON TABLE "ResolveLog" IS '解析日志';
+COMMENT ON COLUMN "ResolveLog"."id" IS '主键ID';
+COMMENT ON COLUMN "ResolveLog"."parserSourceId" IS '解析源ID';
+COMMENT ON COLUMN "ResolveLog"."targetUrl" IS '目标地址';
+COMMENT ON COLUMN "ResolveLog"."success" IS '是否成功';
+COMMENT ON COLUMN "ResolveLog"."message" IS '结果消息';
+COMMENT ON COLUMN "ResolveLog"."createdAt" IS '创建时间';
+
+COMMENT ON TABLE "CrawlJob" IS '爬取任务';
+COMMENT ON COLUMN "CrawlJob"."id" IS '主键ID';
+COMMENT ON COLUMN "CrawlJob"."siteProviderId" IS '站点提供方ID';
+COMMENT ON COLUMN "CrawlJob"."status" IS '任务状态';
+COMMENT ON COLUMN "CrawlJob"."startedAt" IS '开始时间';
+COMMENT ON COLUMN "CrawlJob"."finishedAt" IS '结束时间';
+COMMENT ON COLUMN "CrawlJob"."createdAt" IS '创建时间';
+
+COMMENT ON TABLE "CrawlJobLog" IS '爬取任务日志';
+COMMENT ON COLUMN "CrawlJobLog"."id" IS '主键ID';
+COMMENT ON COLUMN "CrawlJobLog"."crawlJobId" IS '爬取任务ID';
+COMMENT ON COLUMN "CrawlJobLog"."level" IS '日志级别';
+COMMENT ON COLUMN "CrawlJobLog"."message" IS '日志内容';
+COMMENT ON COLUMN "CrawlJobLog"."createdAt" IS '创建时间';
+
+COMMENT ON TABLE "AgentNote" IS 'Agent 协作笔记';
+COMMENT ON COLUMN "AgentNote"."id" IS '主键ID';
+COMMENT ON COLUMN "AgentNote"."userId" IS '用户ID（可空）';
+COMMENT ON COLUMN "AgentNote"."taskKey" IS '任务键';
+COMMENT ON COLUMN "AgentNote"."content" IS '笔记内容';
+COMMENT ON COLUMN "AgentNote"."createdAt" IS '创建时间';
+
+COMMENT ON TABLE "SkillTemplate" IS '技能模板';
+COMMENT ON COLUMN "SkillTemplate"."id" IS '主键ID';
+COMMENT ON COLUMN "SkillTemplate"."name" IS '模板名称';
+COMMENT ON COLUMN "SkillTemplate"."scenario" IS '适用场景';
+COMMENT ON COLUMN "SkillTemplate"."status" IS '模板状态';
+COMMENT ON COLUMN "SkillTemplate"."createdAt" IS '创建时间';
+COMMENT ON COLUMN "SkillTemplate"."updatedAt" IS '更新时间';
+
 -- AddForeignKey
 ALTER TABLE "CrawlJobLog" ADD CONSTRAINT "CrawlJobLog_crawlJobId_fkey" FOREIGN KEY ("crawlJobId") REFERENCES "CrawlJob"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 

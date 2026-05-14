@@ -14,6 +14,7 @@
 - DTO 统一做参数校验。
 - 新增模块需补充最小可用测试。
 - 关键业务逻辑必须添加中文注释，解释业务意图与约束。
+- PostgreSQL（bgsql）中所有表和字段必须添加中文注释（`COMMENT ON TABLE/COLUMN`），新增或变更表结构时同步更新。
 
 ## Knowledge Workflow
 - 任务决策与复用结论写入 `docs/agents/agent.md`。
