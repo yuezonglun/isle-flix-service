@@ -15,6 +15,8 @@ export class AuthService {
   }
 
   async register(dto) {
+    this.ensureAuthPayload(dto);
+
     const exists = await this.prisma.user.findUnique({
       where: { username: dto.username },
       select: { id: true },
@@ -42,6 +44,8 @@ export class AuthService {
   }
 
   async login(dto) {
+    this.ensureAuthPayload(dto);
+
     const user = await this.prisma.user.findUnique({
       where: { username: dto.username },
       include: {
@@ -85,5 +89,18 @@ export class AuthService {
   async signToken(userId, role) {
     const accessToken = await this.jwtService.signAsync({ sub: userId, role });
     return { accessToken };
+  }
+
+  ensureAuthPayload(dto) {
+    const username = typeof dto?.username === 'string' ? dto.username.trim() : '';
+    const password = typeof dto?.password === 'string' ? dto.password : '';
+
+    // 业务约束：登录/注册必须提供非空用户名与密码，避免无效入参下沉到 Prisma 导致 500。
+    if (!username || !password) {
+      throw new BadRequestException('用户名和密码不能为空');
+    }
+
+    dto.username = username;
+    dto.password = password;
   }
 }
