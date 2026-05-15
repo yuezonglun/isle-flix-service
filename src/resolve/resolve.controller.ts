@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ResolveDto, ResolveResponseDto } from './resolve.dto';
 import { ResolveService } from './resolve.service';
@@ -15,6 +15,7 @@ export class ResolveController {
   @ApiOperation({ summary: '资源解析', description: '多 ID 场景保留语义字段：resourceId/episodeId/parserSourceId。' })
   @ApiBody({ type: ResolveDto })
   @ApiCreatedResponse({ type: ResolveResponseDto, description: '解析成功（统一响应体：code/status/message/data/ts）' })
+  @ApiNotFoundResponse({ description: '解析源不存在（统一响应体：code/status/message/data/ts）' })
   resolve(@Body() dto: ResolveDto) {
     return this.resolveService.resolve(dto);
   }
