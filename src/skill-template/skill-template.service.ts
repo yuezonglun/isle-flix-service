@@ -1,31 +1,79 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { Prisma } from '@prisma/client';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { PrismaService } from '../prisma/prisma.service';
 
 type SkillTemplate = { id: string; name: string; scenario: string; status: 'draft' | 'active'; createdAt: string };
 
 @Injectable()
 export class SkillTemplateService {
-  private readonly templates: SkillTemplate[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-  generate(name: string, scenario: string): SkillTemplate {
-    const item: SkillTemplate = { id: randomUUID(), name, scenario, status: 'draft', createdAt: new Date().toISOString() };
-    this.templates.push(item);
-    this.writeTemplateFile(item);
-    return item;
-  }
-
-  list(query: { keyword?: string; status?: 'draft' | 'active' }): SkillTemplate[] {
-    return this.templates.filter((it) => {
-      if (query.status && it.status !== query.status) return false;
-      if (query.keyword && !`${it.name} ${it.scenario}`.includes(query.keyword)) return false;
-      return true;
+  async generate(name: string, scenario: string): Promise<SkillTemplate> {
+    const item = await this.prisma.skillTemplate.create({
+      data: { name, scenario, status: 'draft' },
     });
+
+    this.writeTemplateFile({
+      id: item.id,
+      name: item.name,
+      scenario: item.scenario,
+      status: this.toStatus(item.status),
+      createdAt: item.createdAt.toISOString(),
+    });
+
+    return {
+      id: item.id,
+      name: item.name,
+      scenario: item.scenario,
+      status: this.toStatus(item.status),
+      createdAt: item.createdAt.toISOString(),
+    };
   }
 
-  detail(id: string): SkillTemplate | undefined {
-    return this.templates.find((it) => it.id === id);
+  async list(query: { keyword?: string; status?: 'draft' | 'active' }): Promise<SkillTemplate[]> {
+    const where: Prisma.SkillTemplateWhereInput = {
+      ...(query.status ? { status: query.status } : {}),
+      ...(query.keyword
+        ? {
+            OR: [
+              { name: { contains: query.keyword } },
+              { scenario: { contains: query.keyword } },
+            ],
+          }
+        : {}),
+    };
+
+    const templates = await this.prisma.skillTemplate.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return templates.map((it) => ({
+      id: it.id,
+      name: it.name,
+      scenario: it.scenario,
+      status: this.toStatus(it.status),
+      createdAt: it.createdAt.toISOString(),
+    }));
+  }
+
+  async detail(id: string): Promise<SkillTemplate | undefined> {
+    const item = await this.prisma.skillTemplate.findUnique({ where: { id } });
+    if (!item) return undefined;
+
+    return {
+      id: item.id,
+      name: item.name,
+      scenario: item.scenario,
+      status: this.toStatus(item.status),
+      createdAt: item.createdAt.toISOString(),
+    };
+  }
+
+  private toStatus(status: string): 'draft' | 'active' {
+    return status === 'active' ? 'active' : 'draft';
   }
 
   private writeTemplateFile(item: SkillTemplate): void {
