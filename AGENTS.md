@@ -21,10 +21,11 @@
   - Prisma：遵循官方 schema/migrate 工作流，所有结构变更走 migration。
   - class-validator/class-transformer：遵循官方 DTO 校验与转换用法。
   - Swagger（@nestjs/swagger）：遵循官方注解方式，确保请求/响应模型完整可见。
-- 语言策略（新增代码）：
-  - 默认仅对新增代码生效：新增模块/脚本优先使用 JavaScript（`.js`），避免新增 TypeScript（`.ts`）。
-  - 历史 TypeScript 代码不强制迁移，保持现状并确保现有构建链路可运行。
-  - 若必须新增 TypeScript（如框架链路、类型声明或装饰器元数据强依赖），需在 `docs/agents/agent.md` 记录不可替代原因与方案取舍。
+- 语言策略（新增与存量迭代）：
+  - 新增模块/脚本优先使用 JavaScript（`.js`），避免新增 TypeScript（`.ts`）。
+  - 存量迭代规则：当任务需要修改某个 `.ts` 文件时，优先将该“当前修改文件”迁移为对应 `.js` 文件，并在当次任务内完成引用更新与最小回归验证。
+  - 迁移节奏采用“按触点逐步替换”，不做一次性全量迁移；每次只处理本次改动涉及的文件，降低风险。
+  - 迁移约束：任何 `.ts -> .js` 迁移必须以“现有构建链路可运行”为前提；若受框架链路、装饰器元数据、类型声明或编译配置限制暂不可迁移，需在 `docs/agents/agent.md` 记录阻塞原因、替代方案与下一步计划。
 - 公共方法封装规则：
   - 业务无关、跨模块复用 >= 2 次的方法必须沉淀到 `src/common`。
   - `src/common` 按能力拆分（如 `utils`、`guards`、`interceptors`、`constants`），禁止堆叠为单一大文件。

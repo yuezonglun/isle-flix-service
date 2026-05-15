@@ -9,6 +9,7 @@ describe('AuthService', () => {
   const prismaMock = {
     user: {
       findUnique: jest.fn(),
+      create: jest.fn(),
     },
   } as any;
 
@@ -37,6 +38,36 @@ describe('AuthService', () => {
     expect(prismaMock.user.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({ where: { username: 'admin' } }),
     );
+  });
+
+  it('register success with username and password', async () => {
+    prismaMock.user.findUnique.mockResolvedValue(null);
+    prismaMock.user.create.mockResolvedValue({
+      id: 'new-user-id',
+      username: 'demo_user',
+    });
+
+    const result = await service.register({ username: 'demo_user', password: '123456' });
+
+    expect(result).toEqual({ id: 'new-user-id', username: 'demo_user' });
+    expect(prismaMock.user.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          username: 'demo_user',
+          status: CommonStatus.ACTIVE,
+        }),
+      }),
+    );
+    const createInput = prismaMock.user.create.mock.calls[0][0];
+    expect(createInput.data.passwordHash).toEqual(expect.any(String));
+    expect(createInput.data.passwordHash).not.toBe('123456');
+  });
+
+  it('register fails when username already exists', async () => {
+    prismaMock.user.findUnique.mockResolvedValue({ id: 'exists-user-id' });
+
+    await expect(service.register({ username: 'admin', password: '123456' })).rejects.toThrow('用户名已存在');
+    expect(prismaMock.user.create).not.toHaveBeenCalled();
   });
 
   it('login fails when user inactive', async () => {
