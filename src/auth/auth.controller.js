@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthTokenResponseDto, LoginDto, RegisterDto, RegisterResponseDto } from './dto-login';
@@ -6,7 +6,7 @@ import { AuthTokenResponseDto, LoginDto, RegisterDto, RegisterResponseDto } from
 @ApiTags('认证模块')
 @Controller('auth')
 export class AuthController {
-  constructor(authService) {
+  constructor(@Inject(AuthService) authService) {
     this.authService = authService;
   }
 
