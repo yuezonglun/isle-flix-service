@@ -15,10 +15,50 @@
 - 新增模块需补充最小可用测试。
 - 关键业务逻辑必须添加中文注释，解释业务意图与约束。
 - PostgreSQL（bgsql）中所有表和字段必须添加中文注释（`COMMENT ON TABLE/COLUMN`），新增或变更表结构时同步更新。
+- 代码规范统一采用官方规范并保持一致：
+  - NestJS：遵循官方模块化分层与依赖注入实践（module/service/controller/provider）。
+  - TypeScript：遵循官方 Handbook 与 `strict` 思维，避免 `any`，优先精确类型。
+  - Prisma：遵循官方 schema/migrate 工作流，所有结构变更走 migration。
+  - class-validator/class-transformer：遵循官方 DTO 校验与转换用法。
+  - Swagger（@nestjs/swagger）：遵循官方注解方式，确保请求/响应模型完整可见。
+- 语言策略（新增代码）：
+  - 默认仅对新增代码生效：新增模块/脚本优先使用 JavaScript（`.js`），避免新增 TypeScript（`.ts`）。
+  - 历史 TypeScript 代码不强制迁移，保持现状并确保现有构建链路可运行。
+  - 若必须新增 TypeScript（如框架链路、类型声明或装饰器元数据强依赖），需在 `docs/agents/agent.md` 记录不可替代原因与方案取舍。
+- 公共方法封装规则：
+  - 业务无关、跨模块复用 >= 2 次的方法必须沉淀到 `src/common`。
+  - `src/common` 按能力拆分（如 `utils`、`guards`、`interceptors`、`constants`），禁止堆叠为单一大文件。
+  - 封装公共方法时必须补充最小测试与示例用法（单测或集成测试至少其一）。
+  - 新增公共方法时，在 `docs/agents/agent.md` 记录“来源问题、适用边界、禁用场景”。
 
 ## Knowledge Workflow
 - 任务决策与复用结论写入 `docs/agents/agent.md`。
 - 新增可复用能力时，优先沉淀为 skill 模板（`docs/skills`）。
+- 发现的问题若具备复用价值（会重复出现、可形成规则、可沉淀脚手架）必须当次写入规范，不可只修代码不留结论。
+- 每次任务结束至少补充 3 类信息到 `docs/agents/agent.md`：
+  - 问题现象与根因（包含触发条件）。
+  - 最终决策与取舍（为什么不用其他方案）。
+  - 可复用资产（公共方法、脚本、skill、测试策略）。
+- skill 选择与调用要记录在案：
+  - 默认先判断是否需要 `find-skills` 发现可复用 skill。
+  - 如果任务涉及设计/文档/表格等垂直场景，按匹配度选择对应 skill，并记录“为什么调用”。
+  - 若未调用 skill，也要记录不调用理由（例如：现有规范已覆盖、任务过小）。
+- 多 agent 决策规范：
+  - 简单任务（单文件、小范围改动）默认单 agent，减少上下文与 token 开销。
+  - 并行价值明确且写入边界互不冲突时可启用多 agent（例如：一个 agent 查文档，一个 agent 改测试）。
+  - 使用多 agent 前先定义各 agent 负责文件范围，避免互相覆盖。
+  - 是否启用多 agent 及原因，必须写入 `docs/agents/agent.md`。
+
+## Skill Routing
+- 默认路由：
+  - 能力不明确或希望扩展能力时，先使用 `find-skills` 做 skill 发现与选择。
+  - OpenAI 产品/API 类问题，使用 `openai-docs`（仅官方文档来源）。
+  - GitHub PR/Issue/CI 相关任务，优先使用 `github:*` 系列 skill。
+  - 文档/表格/演示文稿任务，分别使用 `documents`、`spreadsheets`、`presentations`。
+- 选择原则：
+  - 优先选择“最小可满足任务”的单 skill；必要时再组合多个 skill。
+  - 调用前记录目标，调用后记录收益（效率、质量、复用性）。
+  - 若不调用任何 skill，必须在 `docs/agents/agent.md` 写明原因。
 
 ## Doc Workflow
 - Swagger 是接口规范唯一来源：`/docs`、`/docs-json`。
