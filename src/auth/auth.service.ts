@@ -24,12 +24,12 @@ export class AuthService {
     });
 
     if (!user || user.status !== CommonStatus.ACTIVE) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('用户名或密码错误');
     }
 
     const passwordMatched = await bcrypt.compare(dto.password, user.passwordHash);
     if (!passwordMatched) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('用户名或密码错误');
     }
 
     return this.signToken(user.id, user.userRoles[0]?.role.code ?? 'admin');
@@ -47,7 +47,7 @@ export class AuthService {
     });
 
     if (!admin || admin.status !== CommonStatus.ACTIVE) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('管理员账号不可用');
     }
 
     return this.signToken(admin.id, admin.userRoles[0]?.role.code ?? 'admin');

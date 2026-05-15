@@ -14,7 +14,7 @@ export class ResolveController {
   @Post('resolve')
   @ApiOperation({ summary: '资源解析', description: '多 ID 场景保留语义字段：resourceId/episodeId/parserSourceId。' })
   @ApiBody({ type: ResolveDto })
-  @ApiCreatedResponse({ type: ResolveResponseDto, description: '解析成功' })
+  @ApiCreatedResponse({ type: ResolveResponseDto, description: '解析成功（统一响应体：code/status/message/data/ts）' })
   resolve(@Body() dto: ResolveDto) {
     return this.resolveService.resolve(dto);
   }

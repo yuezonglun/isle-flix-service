@@ -14,7 +14,7 @@ export class ResolveService {
         parserSourceId: dto.parserSourceId,
         targetUrl: dto.targetUrl,
         success: true,
-        message: 'resolve success',
+        message: '解析成功',
       },
     });
 

@@ -14,7 +14,7 @@ export class CrawlJobController {
   @Post('create')
   @ApiOperation({ summary: '创建采集任务', description: '创建一个资源站目录元数据采集任务。' })
   @ApiBody({ type: CreateCrawlJobDto })
-  @ApiCreatedResponse({ type: CrawlJobResponseDto, description: '创建成功' })
+  @ApiCreatedResponse({ type: CrawlJobResponseDto, description: '创建成功（统一响应体：code/status/message/data/ts）' })
   create(@Body() dto: CreateCrawlJobDto) {
     return this.crawlJobService.create(dto.siteKey, dto.category);
   }
@@ -22,7 +22,7 @@ export class CrawlJobController {
   @Get('detail')
   @ApiOperation({ summary: '采集任务详情', description: '单对象操作统一使用 query 参数 id。' })
   @ApiQuery({ name: 'id', description: '任务主键 id（UUID）', required: true, example: '550e8400-e29b-41d4-a716-446655440000' })
-  @ApiOkResponse({ type: CrawlJobResponseDto, description: '查询成功' })
+  @ApiOkResponse({ type: CrawlJobResponseDto, description: '查询成功（统一响应体：code/status/message/data/ts）' })
   detail(@Query() query: CrawlJobDetailDto) {
     return this.crawlJobService.detail(query.id);
   }

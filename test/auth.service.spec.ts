@@ -48,7 +48,7 @@ describe('AuthService', () => {
       userRoles: [{ role: { code: 'admin' } }],
     });
 
-    await expect(service.login({ username: 'admin', password: '123456' })).rejects.toThrow('Invalid credentials');
+    await expect(service.login({ username: 'admin', password: '123456' })).rejects.toThrow('用户名或密码错误');
   });
 
   it('login fails when password mismatch', async () => {
@@ -61,6 +61,6 @@ describe('AuthService', () => {
       userRoles: [{ role: { code: 'admin' } }],
     });
 
-    await expect(service.login({ username: 'admin', password: '123456' })).rejects.toThrow('Invalid credentials');
+    await expect(service.login({ username: 'admin', password: '123456' })).rejects.toThrow('用户名或密码错误');
   });
 });

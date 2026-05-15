@@ -12,7 +12,7 @@ export class CrawlJobService {
   async create(siteKey: string, category?: string): Promise<CrawlJob> {
     const siteProvider = await this.prisma.siteProvider.findUnique({ where: { key: siteKey } });
     if (!siteProvider) {
-      throw new NotFoundException('site provider not found');
+      throw new NotFoundException('站点提供方不存在');
     }
 
     const job = await this.prisma.crawlJob.create({

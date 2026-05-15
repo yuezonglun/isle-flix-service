@@ -14,7 +14,7 @@ export class UserParserSourceController {
   @Post('toggle')
   @ApiOperation({ summary: '启用/禁用用户解析源', description: '单对象操作统一使用 body.id。' })
   @ApiBody({ type: ToggleUserParserSourceDto })
-  @ApiOkResponse({ type: ToggleUserParserSourceResponseDto, description: '操作成功' })
+  @ApiOkResponse({ type: ToggleUserParserSourceResponseDto, description: '操作成功（统一响应体：code/status/message/data/ts）' })
   toggle(@Req() req: { user: { userId: string } }, @Body() dto: ToggleUserParserSourceDto) {
     return this.userParserSourceService.toggle(req.user.userId, dto.id, dto.enabled);
   }

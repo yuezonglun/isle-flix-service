@@ -18,7 +18,7 @@
         },
         "responses": {
           "201": {
-            "description": "登录成功",
+            "description": "登录成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -41,7 +41,7 @@
         "parameters": [],
         "responses": {
           "201": {
-            "description": "刷新成功",
+            "description": "刷新成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -117,7 +117,7 @@
         ],
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -156,7 +156,7 @@
         ],
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -195,7 +195,7 @@
         ],
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -236,7 +236,7 @@
         },
         "responses": {
           "201": {
-            "description": "创建成功",
+            "description": "创建成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -275,7 +275,7 @@
         ],
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -314,7 +314,7 @@
         ],
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -355,7 +355,7 @@
         },
         "responses": {
           "201": {
-            "description": "创建成功",
+            "description": "创建成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -393,7 +393,7 @@
         },
         "responses": {
           "200": {
-            "description": "更新成功",
+            "description": "更新成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -431,7 +431,7 @@
         },
         "responses": {
           "200": {
-            "description": "操作成功",
+            "description": "操作成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -469,7 +469,7 @@
         },
         "responses": {
           "201": {
-            "description": "解析成功",
+            "description": "解析成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -507,7 +507,7 @@
         },
         "responses": {
           "201": {
-            "description": "创建成功",
+            "description": "创建成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -556,7 +556,7 @@
         ],
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -605,7 +605,7 @@
         },
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -643,7 +643,7 @@
         },
         "responses": {
           "201": {
-            "description": "创建成功",
+            "description": "创建成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -692,7 +692,7 @@
         ],
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
@@ -733,7 +733,7 @@
         },
         "responses": {
           "200": {
-            "description": "查询成功",
+            "description": "查询成功（统一响应体：code/status/message/data/ts）",
             "content": {
               "application/json": {
                 "schema": {
