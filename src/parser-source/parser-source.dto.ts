@@ -1,9 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, IsUrl, IsUUID } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, IsString, IsUrl, IsUUID } from 'class-validator';
 
 export class ListParserSourceDto {
   @ApiPropertyOptional({ description: '查询范围：system 或 user', example: 'system' })
   @IsOptional()
+  @IsIn(['system', 'user'])
   @IsString()
   scope?: 'system' | 'user';
 }

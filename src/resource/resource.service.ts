@@ -1,42 +1,80 @@
 import { Injectable } from '@nestjs/common';
+import { CommonStatus, Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type Episode = { id: string; resourceId: string; name: string; playPageUrl: string };
 export type ResourceItem = { id: string; title: string; category: string; siteKey: string };
 
 @Injectable()
 export class ResourceService {
-  private readonly resources: ResourceItem[] = [
-    { id: '11111111-1111-1111-1111-111111111111', title: 'Demo Video A', category: 'movie', siteKey: 'yszzq' },
-  ];
+  constructor(private readonly prisma: PrismaService) {}
 
-  private readonly episodes: Episode[] = [
-    {
-      id: '22222222-2222-2222-2222-222222222222',
-      resourceId: '11111111-1111-1111-1111-111111111111',
-      name: 'Episode 1',
-      playPageUrl: 'https://www.yszzq.com/ziyuan/',
-    },
-  ];
-
-  list(query: { id?: string; keyword?: string; category?: string; page?: number; pageSize?: number }): { items: ResourceItem[]; total: number } {
-    let data = [...this.resources];
-    if (query.id) data = data.filter((it) => it.id === query.id);
-    if (query.keyword) {
-      const keyword = query.keyword;
-      data = data.filter((it) => it.title.includes(keyword));
-    }
-    if (query.category) data = data.filter((it) => it.category === query.category);
+  async list(query: {
+    id?: string;
+    keyword?: string;
+    category?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ items: ResourceItem[]; total: number }> {
     const page = query.page ?? 1;
     const pageSize = query.pageSize ?? 20;
-    const start = (page - 1) * pageSize;
-    return { items: data.slice(start, start + pageSize), total: data.length };
+
+    const where: Prisma.MediaResourceWhereInput = {
+      status: CommonStatus.ACTIVE,
+      ...(query.id ? { id: query.id } : {}),
+      ...(query.keyword ? { title: { contains: query.keyword } } : {}),
+      ...(query.category ? { category: query.category } : {}),
+    };
+
+    const [items, total] = await Promise.all([
+      this.prisma.mediaResource.findMany({
+        where,
+        include: { siteProvider: true },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.mediaResource.count({ where }),
+    ]);
+
+    return {
+      items: items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        category: item.category ?? '',
+        siteKey: item.siteProvider.key,
+      })),
+      total,
+    };
   }
 
-  detail(id: string): ResourceItem | undefined {
-    return this.resources.find((it) => it.id === id);
+  async detail(id: string): Promise<ResourceItem | undefined> {
+    const item = await this.prisma.mediaResource.findFirst({
+      where: { id, status: CommonStatus.ACTIVE },
+      include: { siteProvider: true },
+    });
+
+    if (!item) return undefined;
+
+    return {
+      id: item.id,
+      title: item.title,
+      category: item.category ?? '',
+      siteKey: item.siteProvider.key,
+    };
   }
 
-  episodesByResourceId(id: string): Episode[] {
-    return this.episodes.filter((it) => it.resourceId === id);
+  async episodesByResourceId(id: string): Promise<Episode[]> {
+    const episodes = await this.prisma.mediaEpisode.findMany({
+      where: { mediaResourceId: id },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return episodes.map((episode) => ({
+      id: episode.id,
+      resourceId: episode.mediaResourceId,
+      name: episode.episodeName,
+      playPageUrl: episode.playPageUrl,
+    }));
   }
 }

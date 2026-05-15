@@ -29,5 +29,5 @@ export class CrawlJobResponseDto {
   category?: string;
 
   @ApiProperty({ description: '任务状态', example: 'queued' })
-  status!: 'queued' | 'running' | 'finished';
+  status!: 'queued' | 'running' | 'finished' | 'failed';
 }
